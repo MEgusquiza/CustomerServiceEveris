@@ -18,12 +18,12 @@ public class CustomerServiceImpl implements CustomerService {
 	   @Autowired
 	   private CustomerRepository customerRepository;
 	   
-	     // get Customer by Id
+	    
 		public Mono<Customer> getByIdCustomer(String id) {
 			return customerRepository.findById(id)
 					.switchIfEmpty(Mono.error(new Exception("No Customer found with Id: " + id)));
 		}
-		// get All Customer
+	
 	    public Flux<Customer> getAllCustomer() {
 	        long start = System.currentTimeMillis();
 	        Flux<Customer> customers = customerRepository.findAll() ;
@@ -31,11 +31,11 @@ public class CustomerServiceImpl implements CustomerService {
 	        LOGGER.debug("customerRepositoryTotal execution time : " + (end - start));
 	        return customers;
 	    }
-	   // create Customer
+	  
 	    public Mono<Customer> createCustomer(Customer customer) {
 	        return customerRepository.insert(customer);
 	    }   
-	    //update Customer
+	
 		public Mono<Customer> updateCustomer(Customer customer , String id) {
 			return getByIdCustomer(id).doOnNext(
 	                  findCustomer -> {
@@ -48,7 +48,7 @@ public class CustomerServiceImpl implements CustomerService {
 	                	  customerRepository.save(findCustomer).subscribe();
 	                	  }).switchIfEmpty(Mono.error(new Exception("No Customer found.... " + id)));
 		}
-	     // delete Customer by Id
+	
 	    public Mono<Void> deleteByIdCustomer(String id){
 	        return customerRepository.deleteById(id);
 	    }

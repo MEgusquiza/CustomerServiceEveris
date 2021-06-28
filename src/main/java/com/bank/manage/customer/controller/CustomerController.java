@@ -4,13 +4,14 @@ package com.bank.manage.customer.controller;
 import com.bank.manage.customer.domain.service.impl.CustomerServiceImpl;
 import com.bank.manage.customer.persistence.entity.Customer;
 
-
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,35 +32,42 @@ public class CustomerController {
     @Autowired
 	private CustomerServiceImpl  customerServiceImpl;
 	
-     //End point by get customer  (GET)
+ //  @CircuitBreaker( name = "getCustomerBreak", fallbackMethod = "fallBack") //,
+    	//	groupKey="time",commandKey="time" ,threadPoolKey= "Thread" )    
+   
+    @TimeLimiter(name = "timelimiterSlow", fallbackMethod = "greetingFallBack")
+   // @Bulkhead(name = "greetingBulkhead", fallbackMethod = "greetingFallBack", type = Bulkhead.Type.THREADPOOL)   
 	@GetMapping("/{id}")  
 	public ResponseEntity<Mono<Customer>> getCustomer(@PathVariable("id") String id) {	
+		 LOGGER.debug(" EndPoint get by customer {} ", id);
 		return ResponseEntity.ok(customerServiceImpl.getByIdCustomer(id));
-	}
+     }
 	
-	 //End point by get all customers (GET)
-    @GetMapping //(value="/",produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping 
     public Flux<Customer> getAllCustomers() {
+    	 LOGGER.info(" EndPoint get by all customers {} ");
         return customerServiceImpl.getAllCustomer();
     }
     
-    //End point by save customers  (POST)
 	@PostMapping("/save")
 	public ResponseEntity<Mono<Customer>> createCustomer(@RequestBody Customer customer) {
+		 LOGGER.info(" EndPoit get by all customers {} ");
 		return ResponseEntity.ok(customerServiceImpl.createCustomer(customer) );
 	}
 	
-	 //End point by update customers (PUT)
     @PutMapping("/update/{id}")
     public Mono<Customer> updateCustomer(@RequestBody Customer customer, @PathVariable String id) {
     	LOGGER.debug("Updating User with user-id = {}.", id);
         return customerServiceImpl.updateCustomer(customer, id);
     }
     
-    //End point by delete customers (DELETE)
 	 @PostMapping("/delete/{id}")
     public Mono<Void> deleteCustomer(@PathVariable("id") String id){
+		 LOGGER.debug("End point by delete customers ", id);
         return customerServiceImpl.deleteByIdCustomer(id);
     }
     
+	 public String greetingFallBack(Throwable t) {
+		    return "Fall back, timeout";
+		}
 }
