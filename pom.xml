@@ -87,16 +87,8 @@
     <artifactId>spring-boot-starter-aop</artifactId>
 </dependency>
 	
-	
-	
-<!-- 	<dependency>
-     <groupId>org.apache.maven.plugins</groupId>
-     <artifactId>maven-checkstyle-plugin</artifactId>
-    <version>3.1.2</version>
-     <type>maven-plugin</type>
-   </dependency>
--->
-	</dependencies>
+
+</dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -108,34 +100,49 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-   <build>
+  <build>
    <plugins>
+   	<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.2</version>
-        <dependencies>
-           <dependency>
-      <groupId>com.puppycrawl.tools</groupId>
-      <artifactId>checkstyle</artifactId>
-      <version>8.7</version>
-    </dependency>
-        </dependencies>
-      </plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.8.5</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.1.2</version>
+			</plugin>
     </plugins>
+     <finalName>docker-customer-service_v0.1</finalName>
  </build>
   
  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.1.2</version>
-        <configuration>
-          <configLocation>checkstyle.xml</configLocation>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.1.1</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
 
 </project>
